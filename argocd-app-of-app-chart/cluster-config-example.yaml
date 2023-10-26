@@ -1,9 +1,5 @@
 default:
   app:
-    annotations:
-      annotation: test
-    labels:
-      label: test
     enabled: true
     enableAutoSync: true
     autoSyncPrune: false
@@ -12,54 +8,26 @@ default:
       namespace: openshift-gitops
       server: https://kubernetes.default.svc
     source:
-      repoURL: https://github.com/gnunn-gitops/cluster-config.git
+      repoURL: https://github.com/redhatryan/cluster-config.git
       targetRevision: HEAD
 
 projects:
 
   cluster-config:
-    annotations:
-      project: test
-    labels:
-      project: test
     description: Project for overall cluster configuration
     namespace: openshift-gitops
     sourceRepos:
-    - https://github.com/gnunn-gitops/cluster-config
-    destinations: |
-      - namespace: '*'
-        server: https://kubernetes.default.svc
-    extraFields: |
-      clusterResourceWhitelist:
-      - group: '*'
-        kind: '*'
+    - https://github.com/redhatryan/cluster-config
 
   tenants:
     description: Project for individual tenant configuration (namespaces, quotas, etc)
     namespace: openshift-gitops
     sourceRepos:
-    - https://github.com/gnunn-gitops/cluster-config
-    destinations: |
-      - namespace: '*'
-        server: https://kubernetes.default.svc
-    extraFields: |
-      clusterResourceWhitelist:
-      - group: '*'
-        kind: '*'
-    roles:
-      - description: Tenat Admins
-        name: user
-        groups:
-          - tenants-admins
-        policies:
-          - p, proj:tenants:user, applications, get, tenants/*, allow
-          - p, proj:tenants:user, applications, sync, tenants/*, allow
+    - https://github.com/redhatryan/cluster-config
 
 applications:
 
   config-acs:
-    labels:
-      label: overwrite-test
     annotations:
       argocd.argoproj.io/compare-options: IgnoreExtraneous
       argocd.argoproj.io/sync-wave: '21'
@@ -67,9 +35,6 @@ applications:
       path: components/apps/acs-operator/overlays/oauth
 
   config-alertmanager:
-    labels:
-      label: overwrite-test
-      newLabelTest: new-label-test
     annotations:
       argocd.argoproj.io/compare-options: IgnoreExtraneous
       argocd.argoproj.io/sync-wave: '11'
@@ -172,8 +137,6 @@ applications:
         duration: 5s
         factor: 2
         maxDuration: 3m
-    syncOptions:
-      - Replace=true
     extraFields: |
       ignoreDifferences:
         - group: kyverno.io
